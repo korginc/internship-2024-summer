@@ -1,0 +1,42 @@
+.logo {
+  display: table-cell;
+  height: 4em;
+  vertical-align: middle;
+}
+
+.logo-img {
+  height: 4em;
+}
+
+.title-text {
+  display: table-cell;
+  vertical-align: middle;
+  padding-left: 1em;
+}
+
+.whole {
+  padding-left: 3em;
+}
+
+#start-button {
+  height: 2em;
+  margin-top: 1em;
+}
+
+#noteOn-button {
+  height: 2em;
+  margin-top: 1em;
+}
+
+.section-title {
+  text-decoration: underline;
+}
+
+.section {
+  display: flex;
+}
+
+.param {
+  width: 12em;
+  padding: 0em;
+}
