@@ -1,5 +1,6 @@
 const oscTypes = {
     sawtooth: { index: 0, name: "Sawtooth" },
+    sine: { index: 1, name: "Sine" },
 }
 
 const filterTypes = {

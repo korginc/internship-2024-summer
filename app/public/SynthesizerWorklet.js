@@ -57,6 +57,12 @@ class SynthesizerWorklet extends AudioWorkletProcessor {
             case this.desc.oscTypes.sawtooth.index:
                 this.generateSawtooth(buffer);
                 break;
+            case this.desc.oscTypes.sine.index:
+                this.generateSawtooth(buffer);
+                for (let i = 0; i < buffer.length; ++i) {
+                    buffer[i] = Math.cos(Math.PI * buffer[i]);
+                }
+                break;
             default:
                 console.log("Invalid Oscillator Type!");
                 for (let i = 0; i < buffer.length; ++i) {
