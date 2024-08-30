@@ -5,7 +5,7 @@ class SynthesizerWorklet extends AudioWorkletProcessor {
         // The super constructor call is required.
         super();
 
-        this.sampleRate = options.processorOptions.sampleRate;
+        this.sampleRate = parseFloat(options.processorOptions.sampleRate);
         this.interpolation = 9.99e-1; /* [0, 1) */
 
         this.desc = parameterDescriptor;
@@ -13,15 +13,15 @@ class SynthesizerWorklet extends AudioWorkletProcessor {
 
         /* Oscillator */
         this.oscType = this.params.oscType.defaultValue;
-        this.frequency = this.params.frequency.defaultValue / this.sampleRate;
+        this.frequency = parseFloat(this.params.frequency.defaultValue) / this.sampleRate;
         this.iFrequency = this.frequency; /* Interpolated Frequency */
         this.phase = 0.0;
 
         /* Filter */
         this.filterType = this.params.filterType.defaultValue;
-        this.cutoff = this.params.cutoff.defaultValue / this.sampleRate;
+        this.cutoff = parseFloat(this.params.cutoff.defaultValue) / this.sampleRate;
         this.iCutoff = this.cutoff; /* Interpolated Cutoff */
-        this.resonance = this.params.resonance.defaultValue;
+        this.resonance = parseFloat(this.params.resonance.defaultValue);
         this.iResonance = this.resonance; /* Interpolated Resonance */
         this.update = 0;
 
@@ -32,7 +32,7 @@ class SynthesizerWorklet extends AudioWorkletProcessor {
 
         /* Amp */
         this.noteOn = false;
-        this.volume = this.convertVolume(this.params.volume.defaultValue);
+        this.volume = this.convertVolume(parseFloat(this.params.volume.defaultValue));
         this.iVolume = this.volume; /* Interpolated Volume */
 
         this.port.onmessage = (event) => {
@@ -150,7 +150,7 @@ class SynthesizerWorklet extends AudioWorkletProcessor {
                 this.oscType = parameter.value;
                 break;
             case this.params.frequency.id:
-                this.frequency = parameter.value / this.sampleRate;
+                this.frequency = parseFloat(parameter.value) / this.sampleRate;
                 break;
             case this.params.filterType.id:
                 this.filterType = parameter.value;
@@ -160,13 +160,13 @@ class SynthesizerWorklet extends AudioWorkletProcessor {
                 this.filterZ2 = 0.0;
                 break;
             case this.params.cutoff.id:
-                this.cutoff = parameter.value / this.sampleRate;
+                this.cutoff = parseFloat(parameter.value) / this.sampleRate;
                 break;
             case this.params.resonance.id:
-                this.resonance = parameter.value;
+                this.resonance = parseFloat(parameter.value);
                 break;
             case this.params.volume.id:
-                this.volume = this.convertVolume(parameter.value);
+                this.volume = this.convertVolume(parseFloat(parameter.value));
                 break;
             default:
                 break;
