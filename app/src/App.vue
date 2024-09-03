@@ -3,6 +3,7 @@ import OscillatorUI from './components/OscillatorUI.vue';
 import FilterUI from './components/FilterUI.vue';
 import AmpUI from './components/AmpUI.vue';
 import WaveDisplay from './components/WaveDisplay.vue';
+import SpectrumAnalyser from './components/SpectrumAnalyser.vue';
 import parameterDescriptor from "./parameterDescriptor.js"
 </script>
 
@@ -25,8 +26,9 @@ import parameterDescriptor from "./parameterDescriptor.js"
       <div>
         <input id="noteOn-button" type="button" value="Note On" @mousedown="noteOn" @mouseup="noteOff" />
       </div>
-      <div>
+      <div class="display">
         <WaveDisplay ref="wave" :analyser="analyser" />
+        <SpectrumAnalyser ref="spectrum" :analyser="analyser" />
       </div>
       <div>
         <OscillatorUI @parameterChanged="onParameterChanged" />
@@ -76,6 +78,7 @@ export default {
         this.analyser = this.context.createAnalyser();
         this.analyser.maxDecibels = 0;
         this.analyser.fftSize = this.waveDataSize;
+        this.analyser.smoothingTimeConstant = 0.1;
         this.synthesizer.connect(this.analyser).connect(context.destination)
 
         setInterval(this.draw, 1000 / 10) //  オシロスコープ描画用タイマー
@@ -96,6 +99,7 @@ export default {
     },
     draw() {
       this.$refs.wave.drawWave()
+      this.$refs.spectrum.drawSpectrum()
     }
   },
 }
