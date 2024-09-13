@@ -10,9 +10,6 @@ import parameterDescriptor from "./parameterDescriptor.js"
 <template>
   <div class="whole">
     <div class="title">
-      <a class="logo" href="https://www.korg.com/jp/" target="_blank">
-        <img class="logo-img" src="./assets/korg.jpg" />
-      </a>
       <h2 class="title-text">
         Internship Synthesizer
       </h2>
