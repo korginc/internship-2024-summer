@@ -3,6 +3,7 @@
 class NoteManager {
     constructor() {
         this.activeNotes = []; //   空の配列を定義
+        this.bendSemitone = 0; //   ピッチベンド量
     }
 
     //  押鍵されたノートナンバーを配列（activeNotes）に追加
@@ -27,6 +28,15 @@ class NoteManager {
             return this.activeNotes[this.activeNotes.length - 1];
         }
         return null; // 押鍵されているノートがない場合
+    }
+
+    //  ピッチベンドしながらノートオンした時に正しく動作するようにベンド量を常に記録しておく
+    setBendSemitone(value) {
+        this.bendSemitone = value;
+    }
+
+    getBendSemitone() {
+        return this.bendSemitone;
     }
 }
 

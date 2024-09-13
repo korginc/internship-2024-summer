@@ -122,6 +122,12 @@ export default {
           this.midiNoteOn(data1, data2);
           break;
 
+        case 0xE:  // En hex(nはMIDIチャンネル)はピッチベンドを指す
+          // ピッチベンドはdata1,data2を合わせた14bitで表現される
+          const data14bit = (data2 << 7) | data1; //  data1,data2を結合して14bitの値を取得(0~16383)
+          this.midiPitchBend(data14bit);
+          break;
+
         default:
           console.log("This status byte is not supported in this app.");
           break;
@@ -137,7 +143,8 @@ export default {
       else {
         //  押鍵中のノートがある（レガートしている）場合はオシレーターをそのノートの音程に変更する
         //  activeNoteNumberを周波数に変換
-        const freq = this.noteNumberToFrequency(activeNoteNumber);
+        const bendSemitone = NoteManager.getBendSemitone();  //  現在のピッチベンド量を取得
+        const freq = this.noteNumberToFrequency(activeNoteNumber + bendSemitone);
         let data = {
           id: this.params.frequency.id,
           value: freq
@@ -151,7 +158,8 @@ export default {
 
       //  ①
       //  ノートナンバーを周波数に変換（算出はnoteNumberToFrequency関数内を見てください）
-      const freq = this.noteNumberToFrequency(noteNumber);
+      const bendSemitone = NoteManager.getBendSemitone();  //  現在のピッチベンド量を取得
+      const freq = this.noteNumberToFrequency(noteNumber + bendSemitone);
       let data = {
         id: this.params.frequency.id,
         value: freq
@@ -173,6 +181,21 @@ export default {
 
       // レガート奏法に対応するためにNoteManagerにノートナンバーを記録する
       NoteManager.noteOn(noteNumber);
+    },
+    midiPitchBend(value14bit) {
+      const value = (value14bit - 8192) / 8192; // -1 ~ 1
+      const bendSemitone = 12 * value;   // +-1オクターブの範囲でピッチベンド量（semitone）を算出
+      NoteManager.setBendSemitone(bendSemitone); //  ピッチベンドしながらノートオンした時に正しく動作するようにベンド量を常に記録しておく
+      const activeNoteNumber = NoteManager.getCurrentNote(); //  現在発音しているノートを取得
+      if (activeNoteNumber != null) {
+        //  現在発音しているノートにピッチベンド量を加算して周波数を算出
+        const freq = this.noteNumberToFrequency(activeNoteNumber + bendSemitone);
+        const data = {
+          id: this.params.frequency.id,
+          value: freq
+        };
+        this.onParameterChanged(data); //  frequencyを変更
+      }
     },
     noteNumberToFrequency(noteNumber) {
       //  12平均律に基づいてノートナンバーを周波数に変換
