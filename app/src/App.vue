@@ -6,6 +6,7 @@ import WaveDisplay from './components/WaveDisplay.vue';
 import SpectrumAnalyser from './components/SpectrumAnalyser.vue';
 import parameterDescriptor from "./parameterDescriptor.js"
 import MidiHandler from "./MidiHandler.js";
+import NoteManager from './NoteManager.js';
 </script>
 
 <template>
@@ -127,8 +128,22 @@ export default {
       }
     },
     midiNoteOff(noteNumber, velocity) {
-      //  単純にノートオフするだけであればnoteNumber, velocityを使用する必要はないですね
-      this.noteOff();
+      NoteManager.noteOff(noteNumber);
+      const activeNoteNumber = NoteManager.getCurrentNote()
+      if (activeNoteNumber == null) {
+        // 押鍵中のノートがない場合はノートオフする
+        this.noteOff();
+      }
+      else {
+        //  押鍵中のノートがある（レガートしている）場合はオシレーターをそのノートの音程に変更する
+        //  activeNoteNumberを周波数に変換
+        const freq = this.noteNumberToFrequency(activeNoteNumber);
+        let data = {
+          id: this.params.frequency.id,
+          value: freq
+        };
+        this.onParameterChanged(data); //  frequencyを変更
+      }
     },
     midiNoteOn(noteNumber, velocity) {
       //  以下の処理でnoteNumber、velocityに対応した音を発音する
@@ -155,6 +170,9 @@ export default {
       //  ③
       //  ノートオン
       this.noteOn();
+
+      // レガート奏法に対応するためにNoteManagerにノートナンバーを記録する
+      NoteManager.noteOn(noteNumber);
     },
     noteNumberToFrequency(noteNumber) {
       //  12平均律に基づいてノートナンバーを周波数に変換
