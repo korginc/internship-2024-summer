@@ -1,5 +1,4 @@
 <script setup>
-import parameterDescriptor from "../parameterDescriptor.js"
 </script>
 
 <template>
@@ -40,6 +39,8 @@ import parameterDescriptor from "../parameterDescriptor.js"
 </template>
 
 <script>
+import parameterDescriptor from "../parameterDescriptor.js" //  <script setup>でインポートすると$refsがうまく機能しないためこちらに移動しました、、
+
 export default {
   name: "FilterUI",
   emits: ["parameterChanged"],
@@ -78,6 +79,22 @@ export default {
     filterTypeName(i) {
       const key = Object.keys(this.filterTypes).find(key => this.filterTypes[key].index == i - 1)
       return this.filterTypes[key].name
+    },
+    setParameter(data) {
+      if (data.id != null && data.value != null) {
+        const id = data.id
+        const value = data.value
+        switch (id) {
+          case this.params.cutoff.id:
+            this.cutoff = Math.round(value)
+            this.logCutoff = Math.log(this.cutoff)
+            break;
+          case this.params.resonance.id:
+            this.resonance = Math.round(value * 100) / 100
+          default:
+            break;
+        }
+      }
     }
   },
 }

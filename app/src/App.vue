@@ -31,7 +31,7 @@ import NoteManager from './NoteManager.js';
       </div>
       <div>
         <OscillatorUI @parameterChanged="onParameterChanged" />
-        <FilterUI @parameterChanged="onParameterChanged" />
+        <FilterUI @parameterChanged="onParameterChanged" ref="filterUI" />
         <AmpUI @parameterChanged="onParameterChanged" />
       </div>
     </div>
@@ -122,6 +122,11 @@ export default {
           this.midiNoteOn(data1, data2);
           break;
 
+        case 0xB:  //  Bn hex(nはMIDIチャンネル)はコントロールチェンジ(CC)を指す
+          //  コントロールチェンジの場合は、data1:CC番号（どのパラメータをコントロールするか）、data2:パラメータの値
+          this.midiControlChange(data1, data2);
+          break;
+
         case 0xE:  // En hex(nはMIDIチャンネル)はピッチベンドを指す
           // ピッチベンドはdata1,data2を合わせた14bitで表現される
           const data14bit = (data2 << 7) | data1; //  data1,data2を結合して14bitの値を取得(0~16383)
@@ -181,6 +186,42 @@ export default {
 
       // レガート奏法に対応するためにNoteManagerにノートナンバーを記録する
       NoteManager.noteOn(noteNumber);
+    },
+    midiControlChange(CCNumber, CCValue) {
+      let param = null;
+      let value = null;
+      let ref = null;  //  UIコンポーネントへの参照(テンプレート参照)を入れるための変数
+      //  CCNumberでどのパラメータを変更するかを場合分け
+      //  以下の場合分けは例です。どのCCNumberがどのパラメータに対応するかは厳密に決まっていないので自由に設定してください。
+      switch (CCNumber) {
+        case 71:
+          //  例：71番でfilter resonanceをコントロール
+          param = this.params.resonance;
+          value = param.minValue + ((param.maxValue - param.minValue) * CCValue / 127);
+          ref = this.$refs.filterUI; //  子コンポーネントの参照
+          break;
+        case 74:
+          //  例：74番でfilter cutoffをコントロール
+          param = this.params.cutoff;
+          value = param.minValue * ((param.maxValue / param.minValue) ** (CCValue / 127));
+          ref = this.$refs.filterUI; //  子コンポーネントの参照
+          break;
+        default:
+          break;
+      }
+      //  CCNumberが上記場合分けに該当した場合はパラメータ変更の処理を実行
+      if (param != null && value != null) {
+        const data = {
+          id: param.id,
+          value: value
+        };
+        this.onParameterChanged(data); // パラメータ変更
+
+        //  パラメータ変更をUIに反映
+        if (ref != null) {
+          ref.setParameter(data) // ref(テンプレート参照)を使って子コンポーネントの関数にアクセス
+        }
+      }
     },
     midiPitchBend(value14bit) {
       const value = (value14bit - 8192) / 8192; // -1 ~ 1
