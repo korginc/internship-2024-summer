@@ -5,6 +5,7 @@ import AmpUI from './components/AmpUI.vue';
 import WaveDisplay from './components/WaveDisplay.vue';
 import SpectrumAnalyser from './components/SpectrumAnalyser.vue';
 import parameterDescriptor from "./parameterDescriptor.js"
+import MidiHandler from "./MidiHandler.js";
 </script>
 
 <template>
@@ -15,7 +16,7 @@ import parameterDescriptor from "./parameterDescriptor.js"
       </h2>
     </div>
     <div>
-      <button id="start-button" v-show="!isStarted" @click="setupWorklet">
+      <button id="start-button" v-show="!isStarted" @click="setup">
         start
       </button>
     </div>
@@ -51,6 +52,10 @@ export default {
     }
   },
   methods: {
+    setup() {
+      this.setupWorklet();
+      this.setupMidi();
+    },
     setupWorklet() {
       console.log("start")
       this.isStarted = true
@@ -93,6 +98,13 @@ export default {
     noteOff() {
       const data = { type: "noteOn", value: false }
       this.synthesizer.port.postMessage(data)
+    },
+    setupMidi() {
+      MidiHandler.init(); // Web MIDIのセットアップ
+      MidiHandler.setHandleMidiCallback(this.processMidiMessage); // processMidiMessageをMIDI受信時のコールバックに設定
+    },
+    processMidiMessage(message) {
+      console.log(message);
     },
     draw() {
       this.$refs.wave.drawWave()
