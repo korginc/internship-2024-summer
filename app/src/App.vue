@@ -104,7 +104,67 @@ export default {
       MidiHandler.setHandleMidiCallback(this.processMidiMessage); // processMidiMessageをMIDI受信時のコールバックに設定
     },
     processMidiMessage(message) {
-      console.log(message);
+      const data = message.data; // データを取得 Uint8Array（8bit符号なし整数値の配列)
+      const [status, data1, data2] = data; // 各要素を変数に格納　先頭がステータスバイト、それ以降がデータバイト
+      //各データバイトは1byte（8bit）だが先頭の1bitはデータバイトであることを示すフラグで常に０なので得られる値は7bit(0~127)である
+      console.log(`ステータスバイト:${status}, データバイト１:${data1}, データバイト２:${data2}`);
+
+      // ステータスバイトの値によって処理を場合分けする（参照：https://www.g200kg.com/jp/docs/tech/midi.html）
+      switch (status >> 4) {
+        case 0x8:  // 8n hex(nはMIDIチャンネル)はノートオフを指す
+          //  ノートオフメッセージの場合も、data1：ノート番号、data2：ベロシティ
+          this.midiNoteOff(data1, data2);
+          break;
+
+        case 0x9:  // 9n hex(nはMIDIチャンネル)はノートオンを指す
+          //  ノートオンメッセージの場合、data1：ノート番号、data2：ベロシティ
+          this.midiNoteOn(data1, data2);
+          break;
+
+        default:
+          console.log("This status byte is not supported in this app.");
+          break;
+      }
+    },
+    midiNoteOff(noteNumber, velocity) {
+      //  単純にノートオフするだけであればnoteNumber, velocityを使用する必要はないですね
+      this.noteOff();
+    },
+    midiNoteOn(noteNumber, velocity) {
+      //  以下の処理でnoteNumber、velocityに対応した音を発音する
+      //  ①noteNumberを使ってオシレーターの周波数を設定　②velocityを使って音量を設定　③Note On
+
+      //  ①
+      //  ノートナンバーを周波数に変換（算出はnoteNumberToFrequency関数内を見てください）
+      const freq = this.noteNumberToFrequency(noteNumber);
+      let data = {
+        id: this.params.frequency.id,
+        value: freq
+      };
+      this.onParameterChanged(data); //  frequencyを変更
+
+      //  ②
+      //  ベロシティでvolumeを変える
+      const volume = velocity / 127; //  velocityは0~127なので、volume=0.0~1.0
+      data = {
+        id: this.params.volume.id,
+        value: volume
+      };
+      this.onParameterChanged(data); //  volumeを変更
+
+      //  ③
+      //  ノートオン
+      this.noteOn();
+    },
+    noteNumberToFrequency(noteNumber) {
+      //  12平均律に基づいてノートナンバーを周波数に変換
+      //  ノートナンバーnの周波数をf(n)Hzとすると
+      //  f(n+1) = f(n) * 2^(1/12)
+      //  つまり　f(n+a) = f(n) * 2^(a/12)
+      const A4_NOTE_NUMBER = 69; // A4のMIDIノート番号
+      const A4_FREQUENCY = 440; // A4の周波数 (Hz)
+      const frequency = A4_FREQUENCY * Math.pow(2, (noteNumber - A4_NOTE_NUMBER) / 12);
+      return frequency;
     },
     draw() {
       this.$refs.wave.drawWave()
