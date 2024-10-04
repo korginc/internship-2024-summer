@@ -1,4 +1,4 @@
-import parameterDescriptor from "./src/parameterDescriptor"
+import parameterDescriptor from "../src/parameterDescriptor"
 
 class SynthesizerWorklet extends AudioWorkletProcessor {
     constructor(options) {
