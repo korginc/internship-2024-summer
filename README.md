@@ -17,9 +17,9 @@ Otherwise, click the <span style="color: green;"><>Code</span> button in the top
 3. Use the following commands in the command line tool:
 
 ```
-cd ~~~/internship-2024-summer/app　 //プロジェクトフォルダに移動  
-npm ci　　　　　　　　　　　　　　　　　　//必要なnode.jsのパッケージを自動インストール  
-npm run dev 　　　　　　　　　　　　　　 //ローカルホストに実行環境を立ち上げる
+cd ~~~/internship-2024-summer/app　     // Move to the project folder 
+npm ci　　　　　　　　　　　　　　　　　　    //Automatically install the necessary Node.js packages  
+npm run dev 　　　　　　　　　　　　　　     //Start the local environment on localhost
 ```
 
 
