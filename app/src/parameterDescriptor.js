@@ -1,6 +1,9 @@
 const oscTypes = {
     sawtooth: { index: 0, name: "Sawtooth" },
     sine: { index: 1, name: "Sine" },
+    square_wave: {index: 2, name: "Square Wave"},
+    choppy_sea: {index: 3, name: "Choppy Sea"},
+    pseudosine_wave: {index: 4, name: "Pseudosine Wave"},
 }
 
 const filterTypes = {
