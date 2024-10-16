@@ -29,6 +29,7 @@ import MyWorkletProcessorUrl from '../public/SynthesizerWorklet.js?worker&url';
       </div>
       <div>
         <WaveDisplay ref="wave" :analyser="analyser" />
+        <SpectrumAnalyzer ref="spectrum" :analyser="analyser" />
       </div>
       <div>
         <OscillatorUI @parameterChanged="onParameterChanged" />
