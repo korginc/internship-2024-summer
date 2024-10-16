@@ -31,7 +31,7 @@ export default {
         return
       }
 
-      const bufferSize = this.analyser.fftSize
+      const bufferSize = this.analyser.maxDecibels;
       const dataArray = new Uint8Array(bufferSize);
       this.analyser.getByteFrequencyData(dataArray);
 
