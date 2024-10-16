@@ -3,6 +3,7 @@ import OscillatorUI from './components/OscillatorUI.vue';
 import FilterUI from './components/FilterUI.vue';
 import AmpUI from './components/AmpUI.vue';
 import WaveDisplay from './components/WaveDisplay.vue';
+import SpectrumAnalyzer from './components/SpectrumAnalyzer.vue';  
 import parameterDescriptor from "./parameterDescriptor.js"
 import MyWorkletProcessorUrl from '../public/SynthesizerWorklet.js?worker&url';
 </script>
