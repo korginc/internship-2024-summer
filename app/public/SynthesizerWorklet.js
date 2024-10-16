@@ -66,10 +66,10 @@ class SynthesizerWorklet extends AudioWorkletProcessor {
              case this.desc.oscTypes.square_wave.index:
                 this.generateSawtooth(buffer);
                 for(let i=0;i<buffer.length; ++i) {
-                    if(buffer[i]=>0)
-                        buffer[i]= 1;
-                    else
-                        buffer[i]= -1;
+                    if(buffer[i]=>0){
+                        buffer[i]= 1;}
+                    else{
+                        buffer[i]= -1;}
                 }
                 break;
             case this.desc.oscTypes.choppy_sea.index:
