@@ -33,7 +33,7 @@ export default {
 
       const bufferSize = this.analyser.fftSize
       const dataArray = new Uint8Array(bufferSize);
-      this.analyser.getByteTimeDomainData(dataArray);
+      this.analyser.getByteFrequencyData(dataArray);
 
       this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
       this.context.beginPath()
