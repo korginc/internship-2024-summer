@@ -4,6 +4,7 @@ import FilterUI from './components/FilterUI.vue';
 import AmpUI from './components/AmpUI.vue';
 import WaveDisplay from './components/WaveDisplay.vue';
 import parameterDescriptor from "./parameterDescriptor.js"
+import MyWorkletProcessorUrl from '../public/SynthesizerWorklet.js?worker&url';
 </script>
 
 <template>
@@ -68,7 +69,7 @@ export default {
         numberOfOutputs: 1,
         outputChannelCount: [1]
       }
-      context.audioWorklet.addModule('/SynthesizerWorklet.js').then(() => {
+      context.audioWorklet.addModule(MyWorkletProcessorUrl).then(() => {
         this.synthesizer = new AudioWorkletNode(context, 'synthesizer-worklet', options)
 
         console.log(this.synthesizer)
