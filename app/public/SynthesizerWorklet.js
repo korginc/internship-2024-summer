@@ -155,6 +155,27 @@ class SynthesizerWorklet extends AudioWorkletProcessor {
                 this.filterA1 = 4.0 * c / a0;
                 this.filterA2 = (s - 2.0) / a0;
                 break;
+            case this.desc.filterTypes.highpass.index:
+                this.filterB0 = (1.0 + c) / a0;
+                this.filterB1 = this.filterB0 * (-2.0);
+                this.filterB2 = this.filterB0;
+                this.filterA1 = 4.0 * c / a0;
+                this.filterA2 = (s - 2.0) / a0;
+                break;
+            case this.desc.filterTypes.bandpass.index:
+                this.filterB0 = s / a0;
+                this.filterB1 = 0.0;
+                this.filterB2 = (this.filterB0)*(-1.0);
+                this.filterA1 = 4.0 * c / a0;
+                this.filterA2 = (s - 2.0) / a0;
+                break;
+            case this.desc.filterTypes.bandstop.index:
+                this.filterB0 = 2.0 / a0;
+                this.filterB1 = (-4.0 * c) / a0;
+                this.filterB2 = this.filterB0;
+                this.filterA1 = 4.0 * c / a0;
+                this.filterA2 = (s - 2.0) / a0;
+                break;
             default:
                 console.log("Invalid Filter Type!");
                 this.filterB0 = 0.0;
