@@ -30,7 +30,7 @@ export default {
   },
   methods:
   {
-    drawWave() {
+    drawSpectrum() {
       if (!this.analyser) {
         return
       }
