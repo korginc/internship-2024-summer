@@ -98,7 +98,7 @@ export default {
       this.synthesizer.port.postMessage(data)
     },
     draw() {
-      this.$refs.wave.drawSpectrum()
+      this.$refs.spectrum.drawSpectrum()
     }
   },
 }
