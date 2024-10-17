@@ -22,6 +22,10 @@ export default {
     return {
       canvas: null,
       context: null,
+      width: 600,
+      height: 100,
+      margin: { top: 10, right: 20, bottom: 30, left: 40 },
+      xTicks: [400, 500, 600, 700, 800],
     }
   },
   methods:
@@ -31,11 +35,12 @@ export default {
         return
       }
 
-      const bufferSize = this.analyser.maxDecibels;
+      const bufferSize = this.analyser.frequencyBinCount;
       const dataArray = new Uint8Array(bufferSize);
       this.analyser.getByteFrequencyData(dataArray);
 
-      this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
+      this.clear();
+      this.drawXAxis();
       this.context.beginPath()
       for (let i = 0; i < bufferSize; i++) {
         const sample = dataArray[i] / 255.0;  // 0.0 ~ 1.0
@@ -49,6 +54,46 @@ export default {
       }
       this.context.strokeStyle = "black";
       this.context.stroke() //  パスを描画
+    },
+    drawXAxis() {
+      const { left, bottom } = this.margin;
+      const axisY = this.height - bottom; 
+
+      // Draw axis line
+      this.context.beginPath();
+      this.context.moveTo(left, axisY); 
+      this.context.lineTo(this.width - this.margin.right, axisY); 
+      this.context.strokeStyle = "black";
+      this.context.stroke();
+
+      // Draw ticks and labels
+      this.xTicks.forEach((tick) => {
+        const x = this.getXPosition(tick); 
+
+        // Draw tick mark
+        this.context.beginPath();
+        this.context.moveTo(x, axisY); 
+        this.context.lineTo(x, axisY + 5); 
+        this.context.stroke();
+
+        // Draw label
+        this.context.fillStyle = "black";
+        this.context.textAlign = "center";
+        this.context.fillText(`${tick} nm`, x, axisY + 15); 
+      });
+    },
+
+    
+    getXPosition(wavelength) {
+      const minWavelength = 400;
+      const maxWavelength = 800;
+      const axisWidth = this.width - this.margin.left - this.margin.right;
+
+     
+      return (
+        this.margin.left +
+        ((wavelength - minWavelength) / (maxWavelength - minWavelength)) * axisWidth
+      );
     },
     clear() {
       this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
